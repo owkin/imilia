@@ -14,8 +14,6 @@ from imilia.data.histo_dataset import HistoDataset
 from imilia.data.loaders import load_data
 from imilia.data.constants import MAX_TILES_IBDCOLEPI as MAX_TILES
 
-# TODO: remove!
-# python ./chowder/infer.py --feats_dir /home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/PROJECT_IBDCOLEPI/features/h0mini
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Chowder Inference Script")
