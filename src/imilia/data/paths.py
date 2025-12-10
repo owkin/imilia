@@ -1,13 +1,12 @@
 """Path configuration for IBDColEPI dataset."""
 
-import os
 from pathlib import Path
 
-import git
 
+# import git
 
-git_repo = git.Repo(__file__, search_parent_directories=True)
-git_root = os.path.abspath(git_repo.git.rev_parse("--show-toplevel"))
+# git_repo = git.Repo(__file__, search_parent_directories=True)
+# git_root = os.path.abspath(git_repo.git.rev_parse("--show-toplevel"))
 
 ####################################################################
 # Base directory for the IBDColEPI dataset
@@ -18,16 +17,9 @@ BASE_DIR = Path("/home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6
 # WSI (Whole Slide Image) directory
 WSI_PATH = BASE_DIR / "WSI"
 
-# Segmentation dataset directory
-BASE_SEG_DIR = BASE_DIR / "patch-dataset-HE" / "Trainset"
-
-# Image and label directories
-IMAGE_DIR = BASE_SEG_DIR / "Images_tif"
-LABEL_DIR = BASE_SEG_DIR / "Labels_tif"
-
-# Features directory (optional, for cached features)
-FEATURES_DIR = BASE_DIR / "features_H0_mini"
-
-# Dataframes with min/max tiles coordinates and scores
-# TODO: replace "slide_path" in dfs by "slide_name"
-MIN_MAX_TILES_DIR = Path(git_root) / "data" / "IBDColEpi" / "min_max_tiles"
+# IBDColEpi: image and label directories for train and test sets
+PATCH_DATASET_BASE_DIR = BASE_DIR / "patch-dataset-HE"
+TRAIN_IMAGE_DIR = PATCH_DATASET_BASE_DIR / "Trainset" / "Images_tif"
+TRAIN_LABEL_DIR = PATCH_DATASET_BASE_DIR / "Trainset" / "Labels_tif"
+TEST_IMAGE_DIR = PATCH_DATASET_BASE_DIR / "Testset" / "Images_tif"
+TEST_LABEL_DIR = PATCH_DATASET_BASE_DIR / "Testset" / "Labels_tif"

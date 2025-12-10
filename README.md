@@ -17,12 +17,28 @@
 
 ---
 
-## 📦 Installation
+## 📦 Setup
 
-Run:
+Run the following command to install uv and setup uv environment:
 
 ````
 make install-all
 ````
 
-Setup: change `BASE_DIR` in `/home/sagemaker-user/imilia/src/imilia/data/paths.py`.
+Download the IBDColEpi data from: https://www.kaggle.com/datasets/henrikpe/251-he-cd3-wsis-annotated-epithelium-ibdcolepi
+
+Change `BASE_DIR` in `/home/sagemaker-user/imilia/src/imilia/data/paths.py` to the path corresponding to where you saved IBDColEpi dataset.
+
+## EpiSeg
+
+Train the model:
+
+```
+python ./episeg/train.py. --output-dir <path/to/episeg_model_dir>
+```
+
+Infer the model on IBDColEpi pre-extracted test patches:
+
+```
+python ./episeg/infer.py --model-path <path/to/episeg_model_dir/timestamp/model.joblib> --image-dir --image-size --output-dir <path/to/episeg_preds_dir>
+```

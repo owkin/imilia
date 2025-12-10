@@ -17,16 +17,16 @@ class H0miniModelWrapper(torch.nn.Module):
         dynamic_img_size: Whether to use dynamic image size. Default: True
 
     Attributes:
-        model: Loaded H0-mini model (torch.nn.Module)
         device: Device to run the model on (torch.device)
+        model: Loaded H0-mini model (torch.nn.Module)
         mean: Mean values for normalization (list of floats)
         std: Standard deviation values for normalization (list of floats)
     """
 
     def __init__(self, device: torch.device | None = None, dynamic_img_size: bool = True):
         super().__init__()
-        self.model = self._load_model(dynamic_img_size=dynamic_img_size)
         self.device = device if device is not None else torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = self._load_model(dynamic_img_size=dynamic_img_size)
         self.mean, self.std = self._get_normalize_transform_params()
 
     def _load_model(

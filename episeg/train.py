@@ -14,7 +14,7 @@ import torch
 from loguru import logger
 
 from imilia.data.loaders import IBDColEPIDataLoader
-from imilia.data.paths import IMAGE_DIR, LABEL_DIR
+from imilia.data.paths import TRAIN_IMAGE_DIR, TRAIN_LABEL_DIR
 from imilia.data.utils import extract_features_and_labels
 from imilia.engine.episeg_trainer import EpiSegTrainer
 from imilia.models import PATCH_SIZE, H0miniModelWrapper
@@ -26,13 +26,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--image-dir",
         type=str,
-        default=str(IMAGE_DIR),
+        default=str(TRAIN_IMAGE_DIR),
         help="Directory containing training images",
     )
     parser.add_argument(
         "--label-dir",
         type=str,
-        default=str(LABEL_DIR),
+        default=str(TRAIN_LABEL_DIR),
         help="Directory containing training labels",
     )
     parser.add_argument(
