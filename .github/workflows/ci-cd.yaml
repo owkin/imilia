@@ -10,7 +10,7 @@ on:
       - main
     paths:
       - .github/workflows/ci-cd.yaml
-      - src/REPLACE_PACKAGE_NAME/**
+      - src/imilia/**
       - tests/**
   release:
     types:
@@ -57,11 +57,11 @@ jobs:
 
       - name: run-tests
         if: matrix.python != '3.10'
-        run: uv run pytest --cov=REPLACE_PACKAGE_NAME
+        run: uv run pytest --cov=imilia
 
       - name: run-tests-with-coverage
         if: matrix.python == '3.10'
-        run: uv run pytest --cov=REPLACE_PACKAGE_NAME --cov-report term --cov-report html:/home/runner/cov_html
+        run: uv run pytest --cov=imilia --cov-report term --cov-report html:/home/runner/cov_html
 
       - name: Archive code coverage results
         if: matrix.python == '3.10' && github.event.action == 'ready_for_review'

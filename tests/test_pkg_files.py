@@ -38,7 +38,7 @@ class TestPackageIntegrity:
     @pytest.mark.usefixtures("readme_content")
     def test_versions_are_aligned(self, readme_content) -> None:
         """Test that the versions are aligned."""
-        from REPLACE_PACKAGE_NAME import __version__
+        from imilia import __version__
 
         match = re.search(r'<img src="https://img\.shields\.io/badge/version-([0-9.]+)-[a-z]+\.svg"', readme_content)
         if match:

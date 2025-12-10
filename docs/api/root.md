@@ -1,1 +1,1 @@
-::: src.REPLACE_PACKAGE_NAME.__main__
+::: src.imilia.__main__

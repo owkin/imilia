@@ -1,4 +1,4 @@
 
 ```bash
-pip install owkin-REPLACE_PACKAGE_NAME
+pip install owkin-imilia
 ```

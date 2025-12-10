@@ -1,3 +1,3 @@
-# REPLACE_PACKAGE_NAME
+# IMILIA
 
-REPLACE_PACKAGE_DESCRIPTION
+IMILIA: interpretable multiple instance learning for inflammation prediction in IBD from H&E whole slide images
