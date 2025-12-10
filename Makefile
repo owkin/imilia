@@ -1,4 +1,4 @@
-.PHONY: checks, docs-serve, docs-build, fmt, config, type, tests
+.PHONY: checks, fmt, config, type, tests
 
 # Run pre-commit checks
 # ------------------------------------------------------------------------------

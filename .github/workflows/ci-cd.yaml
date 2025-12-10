@@ -44,7 +44,7 @@ jobs:
         env:
           UV_INDEX_OWKIN_USERNAME: ${{ steps.auth.outputs.username }}
           UV_INDEX_OWKIN_PASSWORD: ${{ steps.auth.outputs.password }}
-        run: uv sync --all-extras --no-group docs
+        run: uv sync --all-extras
 
       - name: Quality checks
         run: uv run pre-commit run --all-files
