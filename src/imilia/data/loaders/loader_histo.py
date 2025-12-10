@@ -10,12 +10,6 @@ from imilia.data.paths import WSI_PATH
 HISTO_FEATS_PATHS = Path("/home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/PROJECT_IBDCOLEPI/features/h0mini")
 
 
-def load_slides_paths():
-    slide_paths_ = list(WSI_PATH.glob("*_HE_*.ndpi"))
-    slide_paths = {path.name.split(".ndpi")[0]: path for path in slide_paths_}
-    return slide_paths
-
-
 class IBDColEpiHistoLoader:
     def __init__(self):
         self.feats_paths: dict[str, Path | str] | None = None
@@ -45,9 +39,11 @@ class IBDColEpiHistoLoader:
             self.get_histo_feats_paths()
 
         print("Retrieving histology slide paths...")
-        slides_paths_ = load_slides_paths()
-        slides_paths_ = [slides_paths_[key] for key in self.feats_paths.keys()]
-        self.slides_paths = {path.name.split(".ndpi")[0]: path for path in slides_paths_}
+        slides_paths_ = {
+            path.name.split(".ndpi")[0]: path 
+            for path in WSI_PATH.glob("*_HE_*.ndpi")
+        }
+        self.slides_paths = {key: slides_paths_[key] for key in self.feats_paths.keys()}
 
         print(f"Found {len(self.slides_paths)} slide paths.")
 
