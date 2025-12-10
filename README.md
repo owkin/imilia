@@ -19,6 +19,10 @@
 
 ## 📦 Installation
 
+Run:
+
 ````
 make install-all
 ````
+
+Setup: change `BASE_DIR` in `/home/sagemaker-user/imilia/src/imilia/data/paths.py`.
