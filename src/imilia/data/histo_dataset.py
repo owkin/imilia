@@ -1,9 +1,11 @@
 """Module to load and process histology features for machine learning tasks."""
 
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from torch.utils.data import Dataset
+
 
 # TODO: refacto
 class HistoDataset(Dataset):

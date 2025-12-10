@@ -9,6 +9,7 @@ from imilia.data.paths import (
     WSI_PATH,
 )
 
+
 __all__ = [
     "BASE_DIR",
     "WSI_PATH",

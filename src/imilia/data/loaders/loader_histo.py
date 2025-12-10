@@ -36,10 +36,7 @@ class IBDColEpiHistoLoader:
             self.get_histo_feats_paths()
 
         print("Retrieving histology slide paths...")
-        slides_paths_ = {
-            path.name.split(".ndpi")[0]: path 
-            for path in WSI_PATH.glob("*_HE_*.ndpi")
-        }
+        slides_paths_ = {path.name.split(".ndpi")[0]: path for path in WSI_PATH.glob("*_HE_*.ndpi")}
         self.slides_paths = {key: slides_paths_[key] for key in self.feats_paths.keys()}
 
         print(f"Found {len(self.slides_paths)} slide paths.")
@@ -103,7 +100,9 @@ def load_data(return_as_df=False, label_col_name="inflamed", feats_dir: Path | N
         patient_ids.append(patient_id)
         labels.append(label)
 
-    df_data = pd.DataFrame({"slide_path": slides_paths, "patient_id": patient_ids, "features_path": feats_paths, label_col_name: labels})
+    df_data = pd.DataFrame(
+        {"slide_path": slides_paths, "patient_id": patient_ids, "features_path": feats_paths, label_col_name: labels}
+    )
     df_data = df_data.set_index("patient_id")
     if not df_data.index.nunique() == len(df_data):
         print(f"Some slide names are not unique. Non-unique slides: {df_data[df_data.index.duplicated()].index.values}")

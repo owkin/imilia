@@ -1,6 +1,7 @@
-import torch
-from typing import Optional, List, Union
 import warnings
+from typing import List, Optional, Union
+
+import torch
 
 
 class ExtremeLayer(torch.nn.Module):
@@ -74,14 +75,10 @@ class ExtremeLayer(torch.nn.Module):
         top_idx, bottom_idx = None, None
         if mask is not None:
             if self.n_top:
-                top, top_idx = x.masked_fill(mask, float("-inf")).topk(
-                    k=self.n_top, sorted=True, dim=self.dim
-                )
+                top, top_idx = x.masked_fill(mask, float("-inf")).topk(k=self.n_top, sorted=True, dim=self.dim)
                 top_mask = top.eq(float("-inf"))
                 if top_mask.any():
-                    warnings.warn(
-                        "The top tiles contain masked values, they will be set to zero."
-                    )
+                    warnings.warn("The top tiles contain masked values, they will be set to zero.")
                     top[top_mask] = 0
 
             if self.n_bottom:
@@ -90,17 +87,13 @@ class ExtremeLayer(torch.nn.Module):
                 )
                 bottom_mask = bottom.eq(float("inf"))
                 if bottom_mask.any():
-                    warnings.warn(
-                        "The bottom tiles contain masked values, they will be set to zero."
-                    )
+                    warnings.warn("The bottom tiles contain masked values, they will be set to zero.")
                     bottom[bottom_mask] = 0
         else:
             if self.n_top:
                 top, top_idx = x.topk(k=self.n_top, sorted=True, dim=self.dim)
             if self.n_bottom:
-                bottom, bottom_idx = x.topk(
-                    k=self.n_bottom, largest=False, sorted=True, dim=self.dim
-                )
+                bottom, bottom_idx = x.topk(k=self.n_bottom, largest=False, sorted=True, dim=self.dim)
 
         if top is not None and bottom is not None:
             values = torch.cat([top, bottom], dim=self.dim)
@@ -146,16 +139,11 @@ class MLP(torch.nn.Sequential):
         activation: Optional[torch.nn.Module] = torch.nn.Sigmoid(),
         bias: bool = True,
     ):
-
         if dropout is not None:
             if hidden is not None:
-                assert len(hidden) == len(
-                    dropout
-                ), "hidden and dropout must have the same length"
+                assert len(hidden) == len(dropout), "hidden and dropout must have the same length"
             else:
-                raise ValueError(
-                    "hidden must have a value and have the same length as dropout if dropout is given."
-                )
+                raise ValueError("hidden must have a value and have the same length as dropout if dropout is given.")
 
         d_model = in_features
         layers = []
@@ -213,9 +201,7 @@ class MaskedLinear(torch.nn.Linear):
         mask_value: Union[str, float],
         bias: bool = True,
     ):
-        super(MaskedLinear, self).__init__(
-            in_features=in_features, out_features=out_features, bias=bias
-        )
+        super(MaskedLinear, self).__init__(in_features=in_features, out_features=out_features, bias=bias)
         self.mask_value = mask_value
 
     def forward(self, x: torch.Tensor, mask: Optional[torch.BoolTensor] = None):
@@ -274,15 +260,12 @@ class TilesMLP(torch.nn.Module):
         activation: torch.nn.Module = torch.nn.Sigmoid(),
         dropout: Optional[torch.nn.Module] = None,
     ):
-
         super(TilesMLP, self).__init__()
 
         self.hidden_layers = torch.nn.ModuleList()
         if hidden is not None:
             for h in hidden:
-                self.hidden_layers.append(
-                    MaskedLinear(in_features, h, bias=bias, mask_value="-inf")
-                )
+                self.hidden_layers.append(MaskedLinear(in_features, h, bias=bias, mask_value="-inf"))
                 self.hidden_layers.append(activation)
                 if dropout:
                     self.hidden_layers.append(dropout)

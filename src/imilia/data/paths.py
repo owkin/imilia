@@ -1,8 +1,10 @@
 """Path configuration for IBDColEPI dataset."""
 
-from pathlib import Path
-import git
 import os
+from pathlib import Path
+
+import git
+
 
 git_repo = git.Repo(__file__, search_parent_directories=True)
 git_root = os.path.abspath(git_repo.git.rev_parse("--show-toplevel"))

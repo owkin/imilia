@@ -2,17 +2,16 @@
 
 import argparse
 from pathlib import Path
-from torch.utils.data import DataLoader
-import torch
+
 import pandas as pd
+import torch
+from torch.utils.data import DataLoader
 from tqdm import tqdm
-import os
 
-from imilia.models.chowder import get_cv_models
-
+from imilia.data.constants import MAX_TILES_IBDCOLEPI as MAX_TILES
 from imilia.data.histo_dataset import HistoDataset
 from imilia.data.loaders import load_data
-from imilia.data.constants import MAX_TILES_IBDCOLEPI as MAX_TILES
+from imilia.models.chowder import get_cv_models
 
 
 def parse_args():
@@ -26,7 +25,7 @@ def parse_args():
     parser.add_argument(
         "--save_dir",
         type=str,
-        default="./chowder_preds",
+        default="./outputs/chowder_preds",
         help="Directory to save predictions.",
     )
     parser.add_argument(
@@ -59,7 +58,7 @@ def main():
 
     pin_memory = True if torch.cuda.is_available() else False
 
-    print(f"Loading models...")
+    print("Loading models...")
     models = get_cv_models()
 
     # Load data
@@ -67,18 +66,14 @@ def main():
     x_paths, y_labels, patient_ids = load_data(feats_dir=Path(args.feats_dir))
 
     histo_ds = HistoDataset(
-        feat_paths = x_paths,
-        labels = y_labels,
-        max_tiles = MAX_TILES,
+        feat_paths=x_paths,
+        labels=y_labels,
+        max_tiles=MAX_TILES,
         slide_level=False,
         include_coords_in_feats=False,
     )
     loader = DataLoader(
-        histo_ds,
-        batch_size=args.batch_size,
-        num_workers=args.num_workers,
-        pin_memory=pin_memory,
-        shuffle=False
+        histo_ds, batch_size=args.batch_size, num_workers=args.num_workers, pin_memory=pin_memory, shuffle=False
     )
 
     # Inference
@@ -98,17 +93,20 @@ def main():
         preds.append(batch_agg_preds)
     preds = torch.cat(preds, dim=0).squeeze()
 
-    df_preds = pd.DataFrame({
-        "feats_path": x_paths,
-        "patient_id": patient_ids,
-        "label": y_labels,
-        "logits": preds.cpu().numpy(),
-        "probs": torch.sigmoid(preds).cpu().numpy(),
-    })
+    df_preds = pd.DataFrame(
+        {
+            "feats_path": x_paths,
+            "patient_id": patient_ids,
+            "label": y_labels,
+            "logits": preds.cpu().numpy(),
+            "probs": torch.sigmoid(preds).cpu().numpy(),
+        }
+    )
 
     # Save predictions
     df_preds.to_csv(save_dir / f"{args.dataset_name.lower()}_preds.csv")
     print(f"Predictions saved to {save_dir / f'{args.dataset_name.lower()}_preds.csv'}")
+
 
 if __name__ == "__main__":
     main()

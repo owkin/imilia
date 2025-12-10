@@ -1,8 +1,10 @@
-import torch
 import warnings
-from typing import Optional, List
+from typing import List, Optional
+
 import numpy as np
-from .submodules import TilesMLP, ExtremeLayer, MLP
+import torch
+
+from .submodules import MLP, ExtremeLayer, TilesMLP
 
 
 class Chowder(torch.nn.Module):
@@ -52,17 +54,10 @@ class Chowder(torch.nn.Module):
             )
 
             if n_top is not None:
-                warnings.warn(
-                    DeprecationWarning(
-                        f"Overriding `n_top={n_top}`" f"with `n_top=n_extreme={n_extreme}`."
-                    )
-                )
+                warnings.warn(DeprecationWarning(f"Overriding `n_top={n_top}`" f"with `n_top=n_extreme={n_extreme}`."))
             if n_bottom is not None:
                 warnings.warn(
-                    DeprecationWarning(
-                        f"Overriding `n_bottom={n_bottom}`"
-                        f"with `n_bottom=n_extreme={n_extreme}`."
-                    )
+                    DeprecationWarning(f"Overriding `n_bottom={n_bottom}`" f"with `n_bottom=n_extreme={n_extreme}`.")
                 )
 
             n_top = n_extreme
@@ -73,17 +68,13 @@ class Chowder(torch.nn.Module):
 
         if mlp_dropout is not None:
             if mlp_hidden is not None:
-                assert len(mlp_hidden) == len(
-                    mlp_dropout
-                ), "mlp_hidden and mlp_dropout must have the same length"
+                assert len(mlp_hidden) == len(mlp_dropout), "mlp_hidden and mlp_dropout must have the same length"
             else:
                 raise ValueError(
                     "mlp_hidden must have a value and have the same length as mlp_dropout if mlp_dropout is given."
                 )
 
-        self.score_model = TilesMLP(
-            in_features, hidden=tiles_mlp_hidden, bias=bias, out_features=out_features
-        )
+        self.score_model = TilesMLP(in_features, hidden=tiles_mlp_hidden, bias=bias, out_features=out_features)
         self.score_model.apply(self.weight_initialization)
 
         self.extreme_layer = ExtremeLayer(n_top=n_top, n_bottom=n_bottom)
@@ -126,9 +117,7 @@ class Chowder(torch.nn.Module):
         )
 
     @classmethod
-    def galaxy_classification(
-        cls, in_features: int, out_features: Optional[int] = 1
-    ) -> "Chowder":
+    def galaxy_classification(cls, in_features: int, out_features: Optional[int] = 1) -> "Chowder":
         """
         Chowder operator using Galaxy's ChowderClassification parameters as default.
 
@@ -246,9 +235,7 @@ class Chowder(torch.nn.Module):
         with torch.no_grad():
             pred, scores = self.forward(x, mask)
 
-        tensor = torch.stack(
-            [pred.cpu()[:, output], torch.mean(scores.cpu()[:, :, channel], dim=1)]
-        )
+        tensor = torch.stack([pred.cpu()[:, output], torch.mean(scores.cpu()[:, :, channel], dim=1)])
         r = torch.corrcoef(tensor)[0, 1].numpy()
 
         if x.shape[0] == 2:
@@ -283,9 +270,7 @@ class Chowder(torch.nn.Module):
 
         """
         scores = self.score_model(x=x, mask=mask)
-        extreme_scores = self.extreme_layer(
-            x=scores, mask=mask
-        )  # (B, N_TOP + N_BOTTOM, OUT_FEATURES)
+        extreme_scores = self.extreme_layer(x=scores, mask=mask)  # (B, N_TOP + N_BOTTOM, OUT_FEATURES)
 
         # Apply MLP to the N_TOP + N_BOTTOM scores
         y = self.mlp(extreme_scores.transpose(1, 2))  # (B, OUT_FEATURES, 1)
@@ -341,17 +326,10 @@ class MultiChannelChowder(Chowder):
             )
 
             if n_top is not None:
-                warnings.warn(
-                    DeprecationWarning(
-                        f"Overriding `n_top={n_top}`" f"with `n_top=n_extreme={n_extreme}`."
-                    )
-                )
+                warnings.warn(DeprecationWarning(f"Overriding `n_top={n_top}`" f"with `n_top=n_extreme={n_extreme}`."))
             if n_bottom is not None:
                 warnings.warn(
-                    DeprecationWarning(
-                        f"Overriding `n_bottom={n_bottom}`"
-                        f"with `n_bottom=n_extreme={n_extreme}`."
-                    )
+                    DeprecationWarning(f"Overriding `n_bottom={n_bottom}`" f"with `n_bottom=n_extreme={n_extreme}`.")
                 )
 
             n_top = n_extreme
@@ -362,17 +340,13 @@ class MultiChannelChowder(Chowder):
 
         if mlp_dropout is not None:
             if mlp_hidden is not None:
-                assert len(mlp_hidden) == len(
-                    mlp_dropout
-                ), "mlp_hidden and mlp_dropout must have the same length"
+                assert len(mlp_hidden) == len(mlp_dropout), "mlp_hidden and mlp_dropout must have the same length"
             else:
                 raise ValueError(
                     "mlp_hidden must have a value and have the same length as mlp_dropout if mlp_dropout is given."
                 )
 
-        self.score_model = TilesMLP(
-            in_features, hidden=tiles_mlp_hidden, bias=bias, out_features=n_channels
-        )
+        self.score_model = TilesMLP(in_features, hidden=tiles_mlp_hidden, bias=bias, out_features=n_channels)
         self.score_model.apply(self.weight_initialization)
 
         self.extreme_layer = ExtremeLayer(n_top=n_top, n_bottom=n_bottom)
@@ -402,13 +376,9 @@ class MultiChannelChowder(Chowder):
             (B, OUT_FEATURES), (B, N_TOP + N_BOTTOM, OUT_FEATURES)
         """
         scores = self.score_model(x=x, mask=mask)
-        extreme_scores = self.extreme_layer(
-            x=scores, mask=mask
-        )  # (B, N_TOP + N_BOTTOM, N_CHANNELS)
+        extreme_scores = self.extreme_layer(x=scores, mask=mask)  # (B, N_TOP + N_BOTTOM, N_CHANNELS)
 
         # Apply MLP to the (N_TOP + N_BOTTOM) * N_CHANNELS scores
-        y = self.mlp(
-            extreme_scores.reshape(-1, extreme_scores.shape[1] * extreme_scores.shape[2])
-        )  # (B, OUT_FEATURES)
+        y = self.mlp(extreme_scores.reshape(-1, extreme_scores.shape[1] * extreme_scores.shape[2]))  # (B, OUT_FEATURES)
 
         return y, extreme_scores

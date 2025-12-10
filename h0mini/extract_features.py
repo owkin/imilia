@@ -1,27 +1,26 @@
 """Script to extract features from IBDColEpi slides using H0-Mini model."""
 
-import openslide
-from openslide.deepzoom import DeepZoomGenerator
-from torch.utils.data import Dataset, DataLoader
-import torch
-import timm
-from timm.data import resolve_data_config
-from timm.data.transforms_factory import create_transform
-from torchvision import transforms
-import numpy as np
-from pathlib import Path
 import argparse
 import logging
-import os
-import shutil
+from pathlib import Path
+
+import numpy as np
+import openslide
+import timm
+import torch
+from openslide.deepzoom import DeepZoomGenerator
+from timm.data import resolve_data_config
+from timm.data.transforms_factory import create_transform
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms
 from tqdm import tqdm
 
-from imilia.data.paths import TILING_COORDS_DIR
 from imilia.data.loaders import IBDColEpiHistoLoader
+from imilia.data.paths import TILING_COORDS_DIR
 
 
 H0MINI_PATCH_SIZE = 14  # H0-Mini patch size is 14x14
-logging.basicConfig(level=logging.INFO, format='[%(processName)s] %(message)s')
+logging.basicConfig(level=logging.INFO, format="[%(processName)s] %(message)s")
 
 
 class TileDataset(Dataset):
@@ -44,9 +43,7 @@ class TileDataset(Dataset):
 
     def __getitem__(self, idx: int) -> np.ndarray:
         tile_level, tile_x, tile_y = self.tiles_coords[idx]
-        coords = self.deepzoom.get_tile_coordinates(
-            level=int(tile_level), address=(tile_x, tile_y)
-        )
+        coords = self.deepzoom.get_tile_coordinates(level=int(tile_level), address=(tile_x, tile_y))
         tile = self.slide.read_region(location=coords[0], level=coords[1], size=coords[2]).convert("RGB")
         # Resize tile to (tile_size, tile_size)
         tile = tile.resize((self.tile_size, self.tile_size))
@@ -56,6 +53,7 @@ class TileDataset(Dataset):
         else:
             tile_tensor = self.transform(tile)
         return tile_tensor, np.array([tile_level, tile_x, tile_y])
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Extract features using H0-Mini model.")
@@ -67,12 +65,15 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
 def process_slide(slide_path, coords_path, h0mini_model, transform, args):
     try:
         slide_name = coords_path.parent.name
         save_path = Path(args.save_dir) / slide_name / "features.npy"
         if save_path.exists() and not args.overwrite:
-            logging.info(f"Features for slide {slide_name} already exist at {save_path}, skipping. If you want to overwrite, set overwrite=True.")
+            logging.info(
+                f"Features for slide {slide_name} already exist at {save_path}, skipping. If you want to overwrite, set overwrite=True."
+            )
         else:
             save_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -80,9 +81,9 @@ def process_slide(slide_path, coords_path, h0mini_model, transform, args):
 
             tiles_coords = np.load(coords_path)  # shape: (n_tiles, 3) with (level, x, y)
             tile_dataset = TileDataset(
-                slide, 
-                tiles_coords, 
-                tile_size=args.tile_size, 
+                slide,
+                tiles_coords,
+                tile_size=args.tile_size,
                 transform=transform,
             )
             tile_loader = DataLoader(
@@ -105,18 +106,17 @@ def process_slide(slide_path, coords_path, h0mini_model, transform, args):
 
                 assert cls_features.shape == (batch_tiles.shape[0], 768)
                 # Concatenate cls_features to batch_coords (batch_tiles.shape[0], 3+768)
-                tiles_feats = np.concatenate(
-                    [batch_coords.numpy(), cls_features.cpu().numpy()], axis=1
-                )
+                tiles_feats = np.concatenate([batch_coords.numpy(), cls_features.cpu().numpy()], axis=1)
                 h0mini_feats.append(tiles_feats)
             h0mini_feats = np.vstack(h0mini_feats)  # shape: (n_tiles, 3+768)
-            assert h0mini_feats.shape == (tiles_coords.shape[0], 3+768)
+            assert h0mini_feats.shape == (tiles_coords.shape[0], 3 + 768)
             np.save(save_path, h0mini_feats)
             logging.info(f"Features for slide {slide_name} saved at {save_path}")
             slide.close()
     except Exception as e:
         logging.error(f"Error processing slide {slide_path}: {e}")
         raise e
+
 
 def main(args):
     if torch.cuda.is_available():
@@ -148,8 +148,9 @@ def main(args):
     h0mini_model.eval()
     transform = create_transform(**resolve_data_config(h0mini_model.pretrained_cfg, model=h0mini_model))
 
-    for slide_path, coords_path in tqdm(zip(slides_paths, coords_paths)):
+    for slide_path, coords_path in tqdm(zip(slides_paths, coords_paths, strict=False)):
         process_slide(slide_path, coords_path, h0mini_model, transform, args)
+
 
 if __name__ == "__main__":
     args = parse_args()

@@ -1,26 +1,24 @@
 """Compute Chowder performance metrics from predictions on IBDColEpi."""
 
-from pathlib import Path
 import argparse
-from scipy.special import expit as sigmoid
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from loguru import logger
 from sklearn.metrics import (
+    ConfusionMatrixDisplay,
     accuracy_score,
     balanced_accuracy_score,
-    confusion_matrix,
     classification_report,
+    confusion_matrix,
     roc_auc_score,
-    ConfusionMatrixDisplay,
 )
-from loguru import logger
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Compute Chowder performance metrics from predictions on IBDColEpi."
-    )
+    parser = argparse.ArgumentParser(description="Compute Chowder performance metrics from predictions on IBDColEpi.")
     parser.add_argument(
         "--preds_path",
         type=str,
@@ -43,7 +41,7 @@ def parse_args():
     parser.add_argument(
         "--save_dir",
         type=str,
-        default="./chowder_perfs",
+        default="./outputs/chowder_perfs",
         help="Directory to save performance metrics and confusion matrix.",
     )
     args = parser.parse_args()
@@ -52,7 +50,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    
+
     preds_path = Path(args.preds_path)
     save_dir = Path(args.save_dir)
     assert preds_path.exists(), f"Predictions file not found at {preds_path}"
@@ -64,7 +62,8 @@ def main():
     logger.info(f"Total samples: {len(df_preds['label'])}")
     for lbl in np.unique(df_preds["label"]):
         print(
-            f"Class {lbl}: {(df_preds['label']==lbl).sum()} samples, {100*(df_preds['label']==lbl).sum()/len(df_preds['label']):.2f}%")
+            f"Class {lbl}: {(df_preds['label']==lbl).sum()} samples, {100*(df_preds['label']==lbl).sum()/len(df_preds['label']):.2f}%"
+        )
 
     # Compute accuracy
     acc = accuracy_score(df_preds["label"], df_preds["preds"])
@@ -93,8 +92,9 @@ def main():
     disp.plot(cmap="Blues", values_format="d")
     plt.title(f"Confusion Matrix (threshold={args.thr})")
     plt.savefig(save_dir / "confusion_matrix.png")
-    
+
     logger.info(f"Performance metrics and confusion matrix saved to {args.save_dir}")
+
 
 if __name__ == "__main__":
     main()
