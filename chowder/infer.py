@@ -1,3 +1,6 @@
+"""Chowder Inference Script"""
+
+import argparse
 from pathlib import Path
 from torch.utils.data import DataLoader
 import torch
@@ -11,14 +14,49 @@ from imilia.data.histo_dataset import HistoDataset
 from imilia.data.loaders import load_data
 from imilia.data.constants import MAX_TILES_IBDCOLEPI as MAX_TILES
 
+# TODO: remove!
+# python ./chowder/infer.py --feats_dir /home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/PROJECT_IBDCOLEPI/features/h0mini
 
-save_dir = Path("./chowder_preds")
-batch_size = 10  # adjust based on memory
-num_workers = 0  # >0 enables multiprocessing
-dataset_name = "ibdcolepi"
+def parse_args():
+    parser = argparse.ArgumentParser(description="Chowder Inference Script")
+    parser.add_argument(
+        "--feats_dir",
+        type=str,
+        required=True,
+        help="Path to H0-mini features directory.",
+    )
+    parser.add_argument(
+        "--save_dir",
+        type=str,
+        default="./chowder_preds",
+        help="Directory to save predictions.",
+    )
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=10,
+        help="Batch size for DataLoader.",
+    )
+    parser.add_argument(
+        "--num_workers",
+        type=int,
+        default=0,
+        help="Number of workers for DataLoader. 0 means no multiprocessing.",
+    )
+    parser.add_argument(
+        "--dataset_name",
+        type=str,
+        default="ibdcolepi",
+        help="Name of the dataset.",
+    )
+    args = parser.parse_args()
+    return args
 
 
 def main():
+    args = parse_args()
+
+    save_dir = Path(args.save_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
 
     pin_memory = True if torch.cuda.is_available() else False
@@ -28,13 +66,7 @@ def main():
 
     # Load data
     print("Loading data...")
-    x_paths, y_labels, patient_ids = load_data()
-    
-    # TODO: remove this line to run on full dataset
-    x_paths = x_paths[:5]
-    y_labels = y_labels[:5]
-    patient_ids = patient_ids[:5]
-    ##############################################
+    x_paths, y_labels, patient_ids = load_data(feats_dir=Path(args.feats_dir))
 
     histo_ds = HistoDataset(
         feat_paths = x_paths,
@@ -45,8 +77,8 @@ def main():
     )
     loader = DataLoader(
         histo_ds,
-        batch_size=batch_size,
-        num_workers=num_workers,
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
         pin_memory=pin_memory,
         shuffle=False
     )
@@ -77,8 +109,8 @@ def main():
     })
 
     # Save predictions
-    df_preds.to_csv(save_dir / f"{dataset_name.lower()}_preds.csv")
-    print(f"Predictions saved to {save_dir / f'{dataset_name.lower()}_preds.csv'}")
+    df_preds.to_csv(save_dir / f"{args.dataset_name.lower()}_preds.csv")
+    print(f"Predictions saved to {save_dir / f'{args.dataset_name.lower()}_preds.csv'}")
 
 if __name__ == "__main__":
     main()

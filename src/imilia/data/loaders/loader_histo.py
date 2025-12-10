@@ -6,12 +6,10 @@ import pandas as pd
 
 from imilia.data.paths import WSI_PATH
 
-# TODO: replace
-HISTO_FEATS_PATHS = Path("/home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/PROJECT_IBDCOLEPI/features/h0mini")
-
 
 class IBDColEpiHistoLoader:
-    def __init__(self):
+    def __init__(self, feats_dir: Path | None):
+        self.feats_dir = feats_dir
         self.feats_paths: dict[str, Path | str] | None = None
         self.slides_paths: dict[str, Path | str] | None = None
         self.mpp_values: dict[str, float] | None = None
@@ -20,16 +18,15 @@ class IBDColEpiHistoLoader:
     def get_histo_feats_paths(self):
         if self.feats_paths is not None:
             return self.feats_paths
-
-        print("Retrieving histology features paths...")
-
-        feats_dir = HISTO_FEATS_PATHS
-        feats_paths_ = list(feats_dir.glob("*_HE_*/features.npy"))
-        feats_paths = {path.parent.name.split(".")[0]: path for path in feats_paths_}
-        self.feats_paths = feats_paths
-        print(f"Found {len(self.feats_paths)} paths to slide features.")
-
-        return self.feats_paths
+        if self.feats_dir is not None:
+            print("Retrieving histology features paths...")
+            feats_paths_ = list(self.feats_dir.glob("*_HE_*/features.npy"))
+            feats_paths = {path.parent.name.split(".")[0]: path for path in feats_paths_}
+            self.feats_paths = feats_paths
+            print(f"Found {len(self.feats_paths)} paths to slide features.")
+            return self.feats_paths
+        else:
+            raise ValueError("feats_dir must be provided to retrieve histology features paths.")
 
     def get_slides_paths(self):
         if self.slides_paths is not None:
@@ -85,8 +82,8 @@ class IBDColEpiHistoLoader:
         return self.df_metadata
 
 
-def load_data(return_as_df=False, label_col_name="inflamed"):
-    hloader = IBDColEpiHistoLoader()
+def load_data(return_as_df=False, label_col_name="inflamed", feats_dir: Path | None = None):
+    hloader = IBDColEpiHistoLoader(feats_dir=feats_dir)
     feats_paths = hloader.get_histo_feats_paths()
     slides_paths = hloader.get_slides_paths()
     keys = feats_paths.keys()
