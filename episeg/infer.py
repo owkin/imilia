@@ -15,13 +15,14 @@ from PIL import Image
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, precision_recall_curve
 
-from imilia.data.utils import extract_features_and_labels
 from imilia.data.loaders import IBDColEPIDataLoader
-from imilia.models import PATCH_SIZE, H0miniModelWrapper
 from imilia.data.paths import TEST_IMAGE_DIR, TEST_LABEL_DIR
+from imilia.data.utils import extract_features_and_labels
+from imilia.models import PATCH_SIZE, H0miniModelWrapper
 
 
 plt.rcParams.update({"font.family": "sans-serif"})
+
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
@@ -30,7 +31,7 @@ def parse_args() -> argparse.Namespace:
         "--model-path",
         type=str,
         required=True,
-        help="Path to trained logistic regression model",
+        help="Path to trained EpiSeg model",
     )
     parser.add_argument(
         "--image-dir",
@@ -190,7 +191,7 @@ def run_inference(
 
 def main() -> None:
     """Main entry point for inference script."""
-    
+
     args = parse_args()
 
     if not args.image_dir:

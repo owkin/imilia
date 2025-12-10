@@ -76,7 +76,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="./outputs",
+        default="./outputs/episeg/",
         help="Directory to save model and plots",
     )
     return parser.parse_args()

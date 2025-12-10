@@ -1,6 +1,5 @@
 """Data module for IBDColEPI dataset."""
 
-from imilia.data.loaders import IBDColEPIDataLoader
 from imilia.data.paths import (
     BASE_DIR,
     TEST_IMAGE_DIR,
@@ -12,7 +11,6 @@ from imilia.data.paths import (
 
 
 __all__ = [
-    "IBDColEPIDataLoader",
     "BASE_DIR",
     "WSI_PATH",
     "TRAIN_IMAGE_DIR",
