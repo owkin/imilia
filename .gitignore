@@ -161,3 +161,6 @@ data/*
 
 # Ruff cache
 .ruff_cache/
+
+# Outputs folder
+outputs/
