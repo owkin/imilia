@@ -13,9 +13,9 @@ import numpy as np
 import torch
 from loguru import logger
 
-from imilia.data.utils import extract_features_and_labels
 from imilia.data.loaders import IBDColEPIDataLoader
 from imilia.data.paths import IMAGE_DIR, LABEL_DIR
+from imilia.data.utils import extract_features_and_labels
 from imilia.engine.episeg_trainer import EpiSegTrainer
 from imilia.models import PATCH_SIZE, H0miniModelWrapper
 
@@ -216,7 +216,7 @@ def main() -> None:
     print(f"After filtering - Label matrix shape: {ys.shape}")
 
     # Initialize trainer
-    trainer = IBDColEPITrainer(
+    trainer = EpiSegTrainer(
         n_folds=args.n_folds,
         c_values=np.logspace(-2, 1, 4),
         random_state=0,

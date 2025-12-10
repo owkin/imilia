@@ -37,7 +37,7 @@ def extract_features_and_labels(
         print(f"Sampling {n_images_per_wsi} images per WSI... Ignoring 'n_images' and 'step'.")
         wsi_ids = [img_name.split("_HE")[0] for img_name in dataset.image_files]
         unique_wsi_ids = np.unique(wsi_ids)
-        indices = []
+        indices: list[int] = []
         for wsi_id in unique_wsi_ids:
             img_indices = [i for i, name in enumerate(dataset.image_files) if wsi_id + "_HE" in name]
             # Randomly sample n_images_per_wsi indices (or all if fewer available)
@@ -70,8 +70,8 @@ def extract_features_and_labels(
                 image_index.append(i * torch.ones(ys[-1].shape))
 
     # Concatenate all lists into torch tensors
-    xs = torch.cat(xs)
-    ys = torch.cat(ys)
-    image_index = torch.cat(image_index)
+    xs_ = torch.cat(xs)
+    ys_ = torch.cat(ys)
+    image_index_ = torch.cat(image_index)
 
-    return xs, ys, image_index
+    return xs_, ys_, image_index_

@@ -18,7 +18,6 @@ class IBDColEPIDataLoader(Dataset):
         label_dir: str | Path | None,
         image_files: list[str] | None = None,
         image_size: int = 1022,
-        transform_to_tensor: bool = True,
         image_size_usage: str = "resize",
     ) -> None:
         """Initialize the dataset loader.
@@ -39,7 +38,6 @@ class IBDColEPIDataLoader(Dataset):
             self.image_files = sorted(os.listdir(self.image_dir))
 
         self.image_size = image_size
-        self.transform_to_tensor = transform_to_tensor
 
         if label_dir is None:
             self.label_dir = None
@@ -60,7 +58,7 @@ class IBDColEPIDataLoader(Dataset):
         """Return the number of samples in the dataset."""
         return len(self.image_files)
 
-    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor] | tuple[torch.Tensor, None]:
         """Get a single image and label pair.
 
         Args:
@@ -91,9 +89,10 @@ class IBDColEPIDataLoader(Dataset):
                 ), f"Label size {label.size} does not match expected size {self.image_size}"
             label = label.point(lambda p: 255 if p > 0 else 0)  # Binarize the label
 
-        if self.transform_to_tensor:
+        # If images and labels are not tensors, convert them
+        if not isinstance(image, torch.Tensor):
             image = transforms.ToTensor()(image)
-            if self.label_dir is not None:
-                label = transforms.ToTensor()(label)
+        if (self.label_dir is not None) and (not isinstance(label, torch.Tensor)):
+            label = transforms.ToTensor()(label)
 
         return image, label
