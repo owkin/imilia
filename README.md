@@ -42,3 +42,5 @@ Infer the model on IBDColEpi pre-extracted test patches:
 ```
 python ./episeg/infer.py --model-path <path/to/episeg_model_dir/timestamp/model.joblib> --image-dir --image-size --output-dir <path/to/episeg_preds_dir>
 ```
+
+This will by default use the pre-extracted test patches from the IBDColEpi dataset. It'll save the binary epithelium masks (`mask_<img_idx>.png`), as well as images showing the ground truth and predicted masks overlaid on the original patch (`overlay_gt_<img_idx>.png` and `overlay_<img_idx>.png`, respectively).

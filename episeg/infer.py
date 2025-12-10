@@ -1,8 +1,6 @@
-"""Inference script for IBDColEPI segmentation."""
-
-# python /home/sagemaker-user/episeg/scripts/infer.py --model-path "/home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/histo/epithelium_segmentation/epi_seg_models/20251202-111252/model.joblib" --image-dir /home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/PROJECT_IBDCOLEPI/patch-dataset-HE/Trainset/Images_tif --image-size 1022 --output-dir /home/sagemaker-user/episeg_inference_outputs --indices 0  # noqa E501
-# python /home/sagemaker-user/episeg/scripts/infer.py --model-path "/home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/histo/epithelium_segmentation/epi_seg_models/20251202-111252/model.joblib" --image-dir /home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/histo/inflammation_pred/y291ORwAcuPg-MIL-training-1762530904-482f/min_max_tiles_png/ccf/max_tiles/11005269HE1.tif --image-size 224 --output-dir /home/sagemaker-user/episeg_inference_outputs_tiles --indices 0 1 2 3 4 5  # noqa E501
-# python /home/sagemaker-user/episeg/scripts/infer.py --model-path "/home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/histo/epithelium_segmentation/epi_seg_models/20251202-111252/model.joblib" --image-dir /home/sagemaker-user/custom-file-systems/efs/fs-09913c1f7db79b6fd/histo/inflammation_pred/y291ORwAcuPg-MIL-training-1762530904-482f/min_max_tiles_png/finbb/max_tiles/HBP_BB23-0131_0027_1_HE.mrxs --image-size 224 --output-dir /home/sagemaker-user/episeg_inference_outputs_tiles --indices 0  # noqa E501
+"""Inference script for epithelium segmentation and performance computation.
+Intended for the IBDColEPI test dataset (pre-extracted patches).
+"""
 
 import argparse
 from pathlib import Path
@@ -149,6 +147,8 @@ def run_inference(
     logger.info(f"Average Precision: {ap:.4f}")
 
     if output_dir:
+        output_dir.mkdir(parents=True, exist_ok=True)
+
         # Plot and save precision-recall curve
         plot_precision_recall_curve(precision, recall, ap_score=ap, output_dir=output_dir)
 
