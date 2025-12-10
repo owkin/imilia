@@ -3,15 +3,15 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/REPLACE_PACKAGE_NAME"]
+packages = ["src/imilia"]
 
 [project]
-name = "owkin-REPLACE_PACKAGE_NAME"
+name = "owkin-imilia"
 dynamic = ["version"]
-description = "REPLACE_PACKAGE_DESCRIPTION"
+description = "IMILIA: interpretable multiple instance learning for inflammation prediction in IBD from H&E whole slide images"
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [{name = "REPLACE_FULL_NAME", email = "REPLACE_EMAIL_NAME@owkin.com"}]
+authors = [{name = "Thalyssa Baiocco Rodrigues", email = "thalyssa.baiocco-rodrigues@owkin.com"}, {name = "Antoine Olivier", email = "antoine.olivier@owkin.com"}]
 keywords = []
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -34,11 +34,11 @@ dependencies = [
 ]
 
 [project.scripts]
-REPLACE_PACKAGE_NAME = "REPLACE_PACKAGE_NAME.__main__:main"
+imilia = "imilia.__main__:main"
 
 [project.urls]
-Source = "https://github.com/owkin/REPLACE_PACKAGE_NAME"
-Issues = "https://github.com/owkin/REPLACE_PACKAGE_NAME/issues"
+Source = "https://github.com/owkin/imilia"
+Issues = "https://github.com/owkin/imilia/issues"
 
 [project.optional-dependencies]
 # Add your extra features dependencies here, e.g.
@@ -56,23 +56,16 @@ dev = [
     "ruff>=0.3.1",
     "yamllint>=1.35.1",
 ]
-docs = [
-    "mkdocs>=1.5.3",
-    "mkdocs-include-markdown-plugin>=6.0.4",
-    "mkdocs-git-revision-date-localized-plugin>=1.2.4",
-    "mkdocs-material>=9.5.13",
-    "mkdocstrings-python>=1.8.0",
-]
 tests = [
     "pytest>=8.0.2",
     "pytest-cov>=4.1.0",
 ]
 
 [tool.hatch.version]
-path = "src/REPLACE_PACKAGE_NAME/__init__.py"
+path = "src/imilia/__init__.py"
 
 [tool.uv]
-default-groups = ["dev", "docs", "tests"]
+default-groups = ["dev", "tests"]
 
 [[tool.uv.index]]
 name = "owkin"
@@ -132,7 +125,7 @@ target-version = "py310"
 quote-style = "double"
 
 [tool.ruff.lint.isort]
-known-first-party = ["REPLACE_PACKAGE_NAME"]
+known-first-party = ["imilia"]
 lines-after-imports = 2
 
 [tool.ruff.lint.pyupgrade]

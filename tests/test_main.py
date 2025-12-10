@@ -1,6 +1,6 @@
 """Test the entry point of the package."""
 
-from REPLACE_PACKAGE_NAME.__main__ import main
+from imilia.__main__ import main
 
 
 class TestMain:
