@@ -1,0 +1,105 @@
+name: ci-cd
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/ci-cd.yaml
+      - src/REPLACE_PACKAGE_NAME/**
+      - tests/**
+  release:
+    types:
+      - published
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  quality-and-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python ${{ matrix.python }}
+        run: uv python install ${{ matrix.python }}
+
+      # In order to publish on the CodeArtifact repository,
+      # raise a Zendesk ticket to have a role provisioned for your repository.
+      - name: Auth to CodeArtifact
+        id: auth
+        uses: owkin/sre-github-actions-workflows/actions/aws_codeartifact_auth@v0.9.0
+
+      - name: Install the project
+        env:
+          UV_INDEX_OWKIN_USERNAME: ${{ steps.auth.outputs.username }}
+          UV_INDEX_OWKIN_PASSWORD: ${{ steps.auth.outputs.password }}
+        run: uv sync --all-extras --no-group docs
+
+      - name: Quality checks
+        run: uv run pre-commit run --all-files
+
+      - name: run-tests
+        if: matrix.python != '3.10'
+        run: uv run pytest --cov=REPLACE_PACKAGE_NAME
+
+      - name: run-tests-with-coverage
+        if: matrix.python == '3.10'
+        run: uv run pytest --cov=REPLACE_PACKAGE_NAME --cov-report term --cov-report html:/home/runner/cov_html
+
+      - name: Archive code coverage results
+        if: matrix.python == '3.10' && github.event.action == 'ready_for_review'
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: /home/runner/cov_html
+
+      - name: Checkout to current branch for coverage update
+        if: github.event_name == 'pull_request' && matrix.python == '3.10' && github.event.action == 'ready_for_review'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate coverage status
+        if: github.event_name == 'pull_request' && matrix.python == '3.10' && github.event.action == 'ready_for_review'
+        run: |
+          set -x
+          total_cov=`grep -Eo '<span class="pc_cov">[0-9]+%</span>' /home/runner/cov_html/index.html | grep -oe '\([0-9.]*\)'`
+          echo $total_cov
+          if [ "$total_cov" -le "50" ] ; then
+          COLOR=red
+          elif [ "$total_cov" -ge "90" ] ; then
+          COLOR=green
+          else
+          COLOR=orange
+          fi
+          echo $COLOR
+          echo "https://img.shields.io/badge/coverage-${total_cov}%25-${COLOR}"
+          curl "https://img.shields.io/badge/coverage-${total_cov}%25-${COLOR}" > assets/cov_badge.svg
+          echo "" >> assets/cov_badge.svg
+
+      - name: Commit coverage badge
+        if: github.event_name == 'pull_request' && matrix.python == '3.10' && github.event.action == 'ready_for_review'
+        uses: EndBug/add-and-commit@v9
+        with:
+            add: assets/cov_badge.svg
+            default_author: github_actor
+            pull: '--no-rebase'
+            message: 'update coverage badge'

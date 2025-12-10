@@ -1,0 +1,34 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-on-owkin-pypi:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repo and submodule
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Build package
+        run: uv build
+
+      # In order to publish on the CodeArtifact repository,
+      # raise a Zendesk ticket to have a role provisioned for your repository.
+      - name: Auth to CodeArtifact
+        id: auth
+        uses: owkin/sre-github-actions-workflows/actions/aws_codeartifact_auth@v0.19.0
+
+      - name: Publish package
+        env:
+          UV_PUBLISH_PASSWORD: ${{ steps.auth.outputs.password }}
+          UV_PUBLISH_URL: ${{ steps.auth.outputs.url }}
+          UV_PUBLISH_USERNAME: ${{ steps.auth.outputs.username }}
+        run: uv publish
