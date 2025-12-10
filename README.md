@@ -3,8 +3,6 @@
 <div align="center">
     <img src="https://img.shields.io/badge/version-0.0.1-orange.svg" />
     <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python" />
-    <a href="https://github.com/owkin/imilia/actions?workflow=docs" target="_blank">
-        <img src="https://github.com/owkin/imilia/workflows/docs/badge.svg" />
     </a>
     <a href="https://github.com/owkin/imilia/actions?workflow=ci-cd" target="_blank">
         <img src="https://github.com/owkin/imilia/workflows/ci-cd/badge.svg" />
