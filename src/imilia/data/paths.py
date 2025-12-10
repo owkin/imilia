@@ -1,12 +1,11 @@
 """Path configuration for IBDColEPI dataset."""
 
 from pathlib import Path
+import git
+import os
 
-
-# import git
-
-# git_repo = git.Repo(__file__, search_parent_directories=True)
-# git_root = os.path.abspath(git_repo.git.rev_parse("--show-toplevel"))
+git_repo = git.Repo(__file__, search_parent_directories=True)
+git_root = os.path.abspath(git_repo.git.rev_parse("--show-toplevel"))
 
 ####################################################################
 # Base directory for the IBDColEPI dataset
@@ -23,3 +22,6 @@ TRAIN_IMAGE_DIR = PATCH_DATASET_BASE_DIR / "Trainset" / "Images_tif"
 TRAIN_LABEL_DIR = PATCH_DATASET_BASE_DIR / "Trainset" / "Labels_tif"
 TEST_IMAGE_DIR = PATCH_DATASET_BASE_DIR / "Testset" / "Images_tif"
 TEST_LABEL_DIR = PATCH_DATASET_BASE_DIR / "Testset" / "Labels_tif"
+
+# Tiling coordinates
+TILING_COORDS_DIR = Path(git_root) / "ibdcolepi_tiling_coords"
