@@ -76,10 +76,10 @@ def main():
     # ROC AUC
     roc_auc = roc_auc_score(df_preds["label"], df_preds["probs"])
 
-    logger.info("Accuracy:", acc)
-    logger.info("Balanced Accuracy:", balanced_acc)
-    logger.info("ROC AUC:", roc_auc)
-    logger.info("Classification Report:\n", report)
+    logger.info(f"Accuracy: {acc}")
+    logger.info(f"Balanced Accuracy: {balanced_acc}")
+    logger.info(f"ROC AUC: {roc_auc}")
+    logger.info(f"Classification Report:\n{report}")
 
     with open(save_dir / "performance_metrics.txt", "w") as f:
         f.write("Performance Metrics:\n")
