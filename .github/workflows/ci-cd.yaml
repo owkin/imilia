@@ -40,12 +40,6 @@ jobs:
       - name: Set up Python ${{ matrix.python }}
         run: uv python install ${{ matrix.python }}
 
-      # In order to publish on the CodeArtifact repository,
-      # raise a Zendesk ticket to have a role provisioned for your repository.
-      - name: Auth to CodeArtifact
-        id: auth
-        uses: owkin/sre-github-actions-workflows/actions/aws_codeartifact_auth@v0.9.0
-
       - name: Install the project
         env:
           UV_INDEX_OWKIN_USERNAME: ${{ steps.auth.outputs.username }}
