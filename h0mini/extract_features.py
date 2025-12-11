@@ -57,7 +57,9 @@ class TileDataset(Dataset):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Extract features using H0-Mini model.")
-    parser.add_argument("--save_dir", type=str, default="./h0mini_feats", help="Directory to save H0-mini features.")
+    parser.add_argument(
+        "--save_dir", type=str, default="./outputs/h0mini_feats", help="Directory to save H0-mini features."
+    )
     parser.add_argument("--tile_size", type=int, default=224, help="Tile size.")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch size.")
     parser.add_argument("--num_workers", type=int, default=8, help="Number of workers for DataLoader.")
@@ -72,7 +74,8 @@ def process_slide(slide_path, coords_path, h0mini_model, transform, args):
         save_path = Path(args.save_dir) / slide_name / "features.npy"
         if save_path.exists() and not args.overwrite:
             logging.info(
-                f"Features for slide {slide_name} already exist at {save_path}, skipping. If you want to overwrite, set overwrite=True."
+                f"Features for slide {slide_name} already exist at {save_path}, skipping. "
+                + "If you want to overwrite, set overwrite=True."
             )
         else:
             save_path.parent.mkdir(parents=True, exist_ok=True)

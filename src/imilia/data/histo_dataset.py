@@ -37,7 +37,7 @@ class HistoDataset(Dataset):
     def __init__(self, feat_paths, labels, max_tiles=None, slide_level=False, include_coords_in_feats=False):
         # Initialize paths and labels, ensure both are of equal length
         self.feat_paths = [Path(path) for path in feat_paths]
-        assert labels.ndim <= 2, "Ammount of dimensions larger than max expected (2)."
+        assert labels.ndim <= 2, "Amount of dimensions larger than max expected (2)."
         self.labels = labels.reshape(-1, 1)
         # self.enc_labels = self._one_hot_encode_labels()
         self.slide_level = slide_level

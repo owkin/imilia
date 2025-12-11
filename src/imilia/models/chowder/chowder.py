@@ -1,3 +1,5 @@
+"""Chowder module."""
+
 import warnings
 from typing import List, Optional
 
@@ -50,14 +52,19 @@ class Chowder(torch.nn.Module):
                 DeprecationWarning(
                     f"Use `n_extreme=None, n_top={n_extreme if n_top is None else n_top}, "
                     f"n_bottom={n_extreme if n_bottom is None else n_bottom}` instead."
-                )
+                ),
+                stacklevel=2,
             )
 
             if n_top is not None:
-                warnings.warn(DeprecationWarning(f"Overriding `n_top={n_top}`" f"with `n_top=n_extreme={n_extreme}`."))
+                warnings.warn(
+                    DeprecationWarning(f"Overriding `n_top={n_top}`" f"with `n_top=n_extreme={n_extreme}`."),
+                    stacklevel=2,
+                )
             if n_bottom is not None:
                 warnings.warn(
-                    DeprecationWarning(f"Overriding `n_bottom={n_bottom}`" f"with `n_bottom=n_extreme={n_extreme}`.")
+                    DeprecationWarning(f"Overriding `n_bottom={n_bottom}`" f"with `n_bottom=n_extreme={n_extreme}`."),
+                    stacklevel=2,
                 )
 
             n_top = n_extreme
@@ -249,7 +256,7 @@ class Chowder(torch.nn.Module):
             pvalue = 2 * (1 - cdf)
 
         if pvalue > 0.05:
-            warnings.warn("Sample size is too small to assess polarity.")
+            warnings.warn("Sample size is too small to assess polarity.", stacklevel=2)
         polarity = np.sign(r)
 
         return polarity, pvalue
@@ -322,14 +329,19 @@ class MultiChannelChowder(Chowder):
                 DeprecationWarning(
                     f"Use `n_extreme=None, n_top={n_extreme if n_top is None else n_top}, "
                     f"n_bottom={n_extreme if n_bottom is None else n_bottom}` instead."
-                )
+                ),
+                stacklevel=2,
             )
 
             if n_top is not None:
-                warnings.warn(DeprecationWarning(f"Overriding `n_top={n_top}`" f"with `n_top=n_extreme={n_extreme}`."))
+                warnings.warn(
+                    DeprecationWarning(f"Overriding `n_top={n_top}`" f"with `n_top=n_extreme={n_extreme}`."),
+                    stacklevel=2,
+                )
             if n_bottom is not None:
                 warnings.warn(
-                    DeprecationWarning(f"Overriding `n_bottom={n_bottom}`" f"with `n_bottom=n_extreme={n_extreme}`.")
+                    DeprecationWarning(f"Overriding `n_bottom={n_bottom}`" f"with `n_bottom=n_extreme={n_extreme}`."),
+                    stacklevel=2,
                 )
 
             n_top = n_extreme
