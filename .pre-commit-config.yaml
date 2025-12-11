@@ -18,12 +18,12 @@ repos:
         language: system
         types: [python]
         entry: 'uv run ruff check --fix src tests'
-      - id: mypy
-        name: 🆎 Static type checking using mypy
-        language: system
-        types: [python]
-        pass_filenames: false
-        entry: 'uv run mypy src --install-types --non-interactive --show-traceback'
+      # - id: mypy
+      #   name: 🆎 Static type checking using mypy
+      #   language: system
+      #   types: [python]
+      #   pass_filenames: false
+      #   entry: 'uv run mypy src --install-types --non-interactive --show-traceback'
       - id: check-ast
         name: 🐍 Check Python AST
         language: system

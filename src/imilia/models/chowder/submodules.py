@@ -68,7 +68,9 @@ class ExtremeLayer(torch.nn.Module):
         if self.n_top and self.n_bottom and ((self.n_top + self.n_bottom) > x.shape[self.dim]):
             warnings.warn(
                 f"Sum of tops is larger than the input tensor shape for dimension {self.dim}: "
-                + f"{self.n_top + self.n_bottom} > {x.shape[self.dim]}. Values will appear twice (in top and in bottom)"
+                + f"{self.n_top + self.n_bottom} > {x.shape[self.dim]}. "
+                + "Values will appear twice (in top and in bottom)",
+                stacklevel=2,
             )
 
         top, bottom = None, None
@@ -78,7 +80,7 @@ class ExtremeLayer(torch.nn.Module):
                 top, top_idx = x.masked_fill(mask, float("-inf")).topk(k=self.n_top, sorted=True, dim=self.dim)
                 top_mask = top.eq(float("-inf"))
                 if top_mask.any():
-                    warnings.warn("The top tiles contain masked values, they will be set to zero.")
+                    warnings.warn("The top tiles contain masked values, they will be set to zero.", stacklevel=2)
                     top[top_mask] = 0
 
             if self.n_bottom:
@@ -87,7 +89,7 @@ class ExtremeLayer(torch.nn.Module):
                 )
                 bottom_mask = bottom.eq(float("inf"))
                 if bottom_mask.any():
-                    warnings.warn("The bottom tiles contain masked values, they will be set to zero.")
+                    warnings.warn("The bottom tiles contain masked values, they will be set to zero.", stacklevel=2)
                     bottom[bottom_mask] = 0
         else:
             if self.n_top:

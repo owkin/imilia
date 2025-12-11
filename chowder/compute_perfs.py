@@ -62,7 +62,8 @@ def main():
     logger.info(f"Total samples: {len(df_preds['label'])}")
     for lbl in np.unique(df_preds["label"]):
         print(
-            f"Class {lbl}: {(df_preds['label']==lbl).sum()} samples, {100*(df_preds['label']==lbl).sum()/len(df_preds['label']):.2f}%"
+            f"Class {lbl}: {(df_preds['label']==lbl).sum()} samples, "
+            + "{100*(df_preds['label']==lbl).sum()/len(df_preds['label']):.2f}%"
         )
 
     # Compute accuracy

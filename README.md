@@ -17,13 +17,13 @@
 
 ---
 
-This repository allows to reproducuce part of the results reporterd in the IMILIA paper: 
-    
+This repository allows to reproducuce part of the results reporterd in the IMILIA paper:
+
 - H0-mini: inference for tile-level feature extraction
 - Chowder (MIL) model: inference on the IBDColEpi public dataset
 - EpiSeg: training and inference on the IBDColEpi public dataset
 
-The code provided here does not currently include the prediction with HistoPLUS on min/max tiles. We are currently working to integrate it to this repo, but in the meantime we refer the reader to the instructions available in Hugging Face to run HistoPLUS: https://huggingface.co/Owkin-Bioptimus/histoplus. 
+The code provided here does not currently include the prediction with HistoPLUS on min/max tiles. We are currently working to integrate it to this repo, but in the meantime we refer the reader to the instructions available in Hugging Face to run HistoPLUS: https://huggingface.co/Owkin-Bioptimus/histoplus.
 
 ## Setup
 
@@ -35,7 +35,7 @@ The code provided here does not currently include the prediction with HistoPLUS 
 
 2. Download the IBDColEpi data from: https://www.kaggle.com/datasets/henrikpe/251-he-cd3-wsis-annotated-epithelium-ibdcolepi
 
-3. Change `BASE_DIR` in `./src/imilia/data/paths.py` to the path corresponding to where you saved (and extracted) the IBDColEpi dataset. The `WSI_PATH` assumes all WSIs have been extracted into a folder named `WSI`. 
+3. Change `BASE_DIR` in `./src/imilia/data/paths.py` to the path corresponding to where you saved (and extracted) the IBDColEpi dataset. The `WSI_PATH` assumes all WSIs have been extracted into a folder named `WSI`.
 
 ## H0-mini feature extraction
 
@@ -53,7 +53,7 @@ Feel free to adjust the script parameters to suit your computing capabilities.
 
 The features are saved in `./outputs/h0mini_feats` by default (unless you pass a different `--save_dir`).
 
-## Chowder inference on IBDColEpi 
+## Chowder inference on IBDColEpi
 
 Once the features are extracted, you can run the inference with the pre-trained Chowder (model weights provided in the folder `./assets/chowder_weights`):
 
@@ -68,7 +68,7 @@ The predictions are saved in `./outputs/chowder_preds` by default (unless you pa
 Then you can run the following script to assess the performance of the model from the predictions:
 
 ```
-python ./chowder/compute_perfs.py 
+python ./chowder/compute_perfs.py
 ```
 
 _Retrieve tile-level scores: (TODO: add instructions/script)_

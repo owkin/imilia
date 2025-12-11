@@ -74,7 +74,8 @@ def process_slide(slide_path, coords_path, h0mini_model, transform, args):
         save_path = Path(args.save_dir) / slide_name / "features.npy"
         if save_path.exists() and not args.overwrite:
             logging.info(
-                f"Features for slide {slide_name} already exist at {save_path}, skipping. If you want to overwrite, set overwrite=True."
+                f"Features for slide {slide_name} already exist at {save_path}, skipping. "
+                + "If you want to overwrite, set overwrite=True."
             )
         else:
             save_path.parent.mkdir(parents=True, exist_ok=True)
