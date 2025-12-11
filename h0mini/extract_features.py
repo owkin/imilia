@@ -57,7 +57,9 @@ class TileDataset(Dataset):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Extract features using H0-Mini model.")
-    parser.add_argument("--save_dir", type=str, default="./h0mini_feats", help="Directory to save H0-mini features.")
+    parser.add_argument(
+        "--save_dir", type=str, default="./outputs/h0mini_feats", help="Directory to save H0-mini features."
+    )
     parser.add_argument("--tile_size", type=int, default=224, help="Tile size.")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch size.")
     parser.add_argument("--num_workers", type=int, default=8, help="Number of workers for DataLoader.")

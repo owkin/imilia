@@ -22,7 +22,7 @@ def parse_args():
     parser.add_argument(
         "--preds_path",
         type=str,
-        default="./chowder_preds/ibdcolepi_preds.csv",
+        default="./outputs/chowder_preds/ibdcolepi_preds.csv",
         help="Path to CSV file containing predictions.",
     )
     parser.add_argument(
